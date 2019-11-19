@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+          <head>
+        <meta charset="utf-8">
+            
+            <title>
+                安装Cloudera Manager和CDH | absorprofess
+            </title>
+            <meta content="width=device-width, initial-scale=1" name="viewport">
+            <meta name="theme-color" content="#4184f3">
+            
+            
+            <link href="/favicon.ico" rel="icon"/>
+            
+
+            <link rel="stylesheet" href="/css/highlight.light.css">
+            <link rel="stylesheet" href="/css/prism-customize.css">
+            <link rel="stylesheet" href="/css/nav-icon.css">
+            <link rel="stylesheet" href="/css/waves.min.css">
+            <link rel="stylesheet" href="/css/jquery.tocify.css">
+            <link rel="stylesheet" href="/css/main.css">
+            <link rel="stylesheet" href="/css/nav-indicator.css">
+            
+  
+
+  
+            </meta>
+        </meta>
+    </head>
+
+    <body>
+        <header>
+            <!-- cover image or sth. -->
+        </header>
+        <div id="main" class="m-scene">
+            
+<div class="nav-wrapper">
+
+    <div class="container">
+        <nav>
+            <div class="logo wave">
+                <a href="/" id="logo">
+                    absorprofess
+                </a>
+            </div>
+            <div class="nav-toggle-icon" >
+                <div class="material-hamburger">
+                    <span>
+                    </span>
+                    <span>
+                    </span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            <div class="menu-wrapper">
+                <div class="nav-indicator">
+                </div>
+                <ul class="menus">
+                    
+                     
+                        <li>
+                            <a class="wave " href="/">
+                                首页
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave " href="/archives">
+                                归档
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave " href="/about">
+                                关于
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave no-smoothstate" href="/atom.xml">
+                                订阅
+                            </a>
+                        </li>
+                     
+                    
+                   
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+            <div class="container content">
+                <div class="scene_element scene_element--fadein">
+                    <div class="row">
+    <div class="main">
+        <article>
+          
+          <header class="post-header">
+          
+          </header>
+          <h1 class="post-title">安装Cloudera Manager和CDH</h1>
+
+          <section class="post-info">
+            <span class="post-date">2019/11/19</span>
+            
+            
+          </section>
+
+          <section class="post-content">
+            <h2 id="一、-安装说明"><a href="#一、-安装说明" class="headerlink" title="一、 安装说明"></a>一、 安装说明</h2><h3 id="1．-相关包的下载地址"><a href="#1．-相关包的下载地址" class="headerlink" title="1． 相关包的下载地址"></a>1． 相关包的下载地址</h3><p>Cloudera Manager 下载地址：<br><a href="http://archive.cloudera.com/cm5/cm/5/" target="_blank" rel="noopener">http://archive.cloudera.com/cm5/cm/5/</a><br>根据自己的操作系统选择合适的版本<br>CDH 安装包地址：<br><a href="http://archive.cloudera.com/cdh5/parcels/latest/" target="_blank" rel="noopener">http://archive.cloudera.com/cdh5/parcels/latest/</a><br>需要下载以下文件：<br>CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel<br>CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel.sha1<br>manifest.json</p>
+<h2 id="二、-准备工作：系统环境搭建"><a href="#二、-准备工作：系统环境搭建" class="headerlink" title="二、 准备工作：系统环境搭建"></a>二、 准备工作：系统环境搭建</h2><p>以下操作均用 root 用户操作。 </p>
+<h3 id="1．-网络配置-所有节点"><a href="#1．-网络配置-所有节点" class="headerlink" title="1． 网络配置(所有节点)"></a>1． 网络配置(所有节点)</h3><ol>
+<li><p>修改 hostname<br>vi /etc/sysconfig/network<br>NETWORKING=yes<br>HOSTNAME=node01</p>
+</li>
+<li><p>修改 ip 与主机名的对应关系<br>vi /etc/hosts</p>
+</li>
+<li><p>168.1.101 node01</p>
+</li>
+<li><p>168.1.102 node02</p>
+</li>
+<li><p>168.1.103 node03<br>注意：这里需要将每台机器的 ip 及主机名对应关系都写进去，本机的也要写进去，否则启<br>动 Agent 的时候会提示 hostname 解析错误，如果服务器为云服务器必须对应内网ip。</p>
+</li>
+</ol>
+<h3 id="2．-设置-ssh-无密码登陆"><a href="#2．-设置-ssh-无密码登陆" class="headerlink" title="2． 设置 ssh 无密码登陆"></a>2． 设置 ssh 无密码登陆</h3><p>在主节点上执行</p>
+<p>1.ssh-keygen -t rsa<br>一路回车，生成无密码的密钥对。<br>将公钥添加到认证文件中：<br>2.cat <del>/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys，并设置 authorized_keys 的访问权限：<br>chmod 600 ~/.ssh/authorized_keys<br>3.scp 文件到所有 datenode 节点：<br>4.scp ~/.ssh/authorized_keys root@nodexx:</del>/.ssh/<br>注意：这里需要将各节点之间的免密登录都进行配置，包括自己到自己的免密登录</p>
+<h3 id="3．-安装-Oracle-的-JDK（所有节点）"><a href="#3．-安装-Oracle-的-JDK（所有节点）" class="headerlink" title="3． 安装 Oracle 的 JDK（所有节点）"></a>3． 安装 Oracle 的 JDK（所有节点）</h3><p>这里不做说明</p>
+<h3 id="4．-安装配置-MySql（主节点）"><a href="#4．-安装配置-MySql（主节点）" class="headerlink" title="4． 安装配置 MySql（主节点）"></a>4． 安装配置 MySql（主节点）</h3><p>这里不做说明</p>
+<h3 id="5．-配置防火墙白名单和-SELinux"><a href="#5．-配置防火墙白名单和-SELinux" class="headerlink" title="5． 配置防火墙白名单和 SELinux"></a>5． 配置防火墙白名单和 SELinux</h3><p>注意： 需要在所有的节点上执行，因为涉及到的端口太多了，推荐使用防火墙白名单安装起来更方便，安装完毕后可以根据需要设置防火墙策略，保证集群安全。<br>配置防火墙白名单：</p>
+<p>1.集群节点之间配置内网全端口访问(重启防火墙生效)<br>iptables -I INPUT -s 192.168.1.xxx -p tcp –dport 0:65535 -j ACCEPT<br>说明：192.168.1.xxx为各节点内网ip地址</p>
+<p>2.主节点配置远程连接全端口访问(重启防火墙生效)<br>iptables -I INPUT -s xxx.xxx.xxx.xxx -p tcp –dport 0:65535 -j ACCEPT<br>说明：xxx.xxx.xxx.xxx为远程连接到集群机器的公网ip地址</p>
+<p>关闭 SELINUX（实际安装过程中发现没有关闭也是可以的，不知道会不会有问题，还需进<br>一步进行验证）:</p>
+<ol>
+<li>setenforce 0 （临时生效）</li>
+<li>修改 /etc/selinux/config 下的 SELINUX=disabled （重启后永久生效）</li>
+</ol>
+<h2 id="三、-安装-CM-Server-和-Agent"><a href="#三、-安装-CM-Server-和-Agent" class="headerlink" title="三、 安装 CM Server 和 Agent"></a>三、 安装 CM Server 和 Agent</h2><h3 id="1．-主节点解压安装"><a href="#1．-主节点解压安装" class="headerlink" title="1． 主节点解压安装"></a>1． 主节点解压安装</h3><p>cloudera manager 的目录默认位置在/opt 下，解压：</p>
+<ol>
+<li>tar xzvf cloudera-manager*.tar.gz</li>
+<li>将解压后的 cm-5.15.1 和 cloudera 目录放到/opt 目录下。</li>
+</ol>
+<h3 id="2．-为-Cloudera-Manager-建立数据库"><a href="#2．-为-Cloudera-Manager-建立数据库" class="headerlink" title="2． 为 Cloudera Manager 建立数据库"></a>2． 为 Cloudera Manager 建立数据库</h3><p>将mysql-connector-java-bin.jar驱动包，放到/opt/cm-5.15.1/share/cmf/lib/中。<br>在主节点初始化 CM5 的数据库：</p>
+<p>/opt/cm-5.15.1/share/cmf/schema/scm_prepare_database.sh mysql cm -<br>hlocalhost -uxxxx -pxxxx –scm-host localhost scm scm scm</p>
+<h3 id="3．-Agent-配置"><a href="#3．-Agent-配置" class="headerlink" title="3． Agent 配置"></a>3． Agent 配置</h3><p>修改/opt/cm-5.15.1/etc/cloudera-scm-agent/config.ini 中的 server_host 为主节点的主机<br>名。<br>同步 Agent 到其他节点</p>
+<p>scp -r /opt/cm-5.15.1 root@nodexx:/opt/</p>
+<h3 id="4．-在所有节点创建-cloudera-scm-用户"><a href="#4．-在所有节点创建-cloudera-scm-用户" class="headerlink" title="4． 在所有节点创建 cloudera-scm 用户"></a>4． 在所有节点创建 cloudera-scm 用户</h3><p>useradd –system –home=/opt/cm-5.15.1/run/cloudera-scm-server/ –nocreate-home<br>–shell=/bin/false –comment “Cloudera SCM User” clouderascm</p>
+<h3 id="5．-准备-Parcels，用以安装-CDH5"><a href="#5．-准备-Parcels，用以安装-CDH5" class="headerlink" title="5． 准备 Parcels，用以安装 CDH5"></a>5． 准备 Parcels，用以安装 CDH5</h3><p>将 CHD5 相关的 Parcel 包放到主节点的/opt/cloudera/parcel-repo/目录中：<br> CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel<br> CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel.sha1<br> manifest.json<br><strong>最后将 CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel.sha1，重命名为 CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel.sha，这点必须注意，否则，系统会重新下载 CDH-5.15.1-1.cdh5.15.1.p0.4-xxx.parcel 文件。</strong></p>
+<h3 id="6．-启动-CM-Server-Agent"><a href="#6．-启动-CM-Server-Agent" class="headerlink" title="6． 启动 CM Server Agent"></a>6． 启动 CM Server Agent</h3><p>/opt/cm-5.15.1/etc/init.d/cloudera-scm-server start<br>/opt/cm-5.15.1/etc/init.d/cloudera-scm-agent start</p>
+
+          </section>
+        </article>
+        
+
+       
+
+         <!-- comments -->
+        <div class="comment-section">
+  
+    
+
+
+</div>
+
+    </div>
+    
+    <aside>
+        <div id="toc">
+        </div>
+    </aside>
+    
+</div>
+
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+    <p>由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动，搭载<a href="https://github.com/wayou/hexo-theme-gstyle" target="_blank" rel="noopener">gstyle</a>主题</p>
+    <p>
+        &copy; 2019 absorprofess
+    </p>
+</footer>
+<script src="/lib/jquery.js"></script>
+<script src="/lib/waves.js"></script>
+<script src="/lib/jquery-ui.js"></script>
+<script src="/lib/jquery.tocify.js"></script>
+<script src="/js/main.js"></script>
+
+    </body>
+</html>
