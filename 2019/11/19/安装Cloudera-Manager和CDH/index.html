@@ -122,7 +122,7 @@
 </li>
 </ol>
 <h3 id="2．-设置-ssh-无密码登陆"><a href="#2．-设置-ssh-无密码登陆" class="headerlink" title="2． 设置 ssh 无密码登陆"></a>2． 设置 ssh 无密码登陆</h3><p>在主节点上执行</p>
-<p>1.ssh-keygen -t rsa<br>一路回车，生成无密码的密钥对。<br>将公钥添加到认证文件中：<br>2.cat <del>/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys，并设置 authorized_keys 的访问权限：<br>chmod 600 ~/.ssh/authorized_keys<br>3.scp 文件到所有 datenode 节点：<br>4.scp ~/.ssh/authorized_keys root@nodexx:</del>/.ssh/<br>注意：这里需要将各节点之间的免密登录都进行配置，包括自己到自己的免密登录</p>
+<p>1.ssh-keygen -t rsa<br>一路回车，生成无密码的密钥对。<br>将公钥添加到认证文件中：<br>2.cat /.ssh/id_rsa.pub &gt;&gt; /.ssh/authorized_keys，并设置 authorized_keys 的访问权限：<br>chmod 600 /.ssh/authorized_keys<br>3.scp 文件到所有 datenode 节点：<br>4.scp /.ssh/authorized_keys root@nodexx:~/.ssh/<br>注意：这里需要将各节点之间的免密登录都进行配置，包括自己到自己的免密登录</p>
 <h3 id="3．-安装-Oracle-的-JDK（所有节点）"><a href="#3．-安装-Oracle-的-JDK（所有节点）" class="headerlink" title="3． 安装 Oracle 的 JDK（所有节点）"></a>3． 安装 Oracle 的 JDK（所有节点）</h3><p>这里不做说明</p>
 <h3 id="4．-安装配置-MySql（主节点）"><a href="#4．-安装配置-MySql（主节点）" class="headerlink" title="4． 安装配置 MySql（主节点）"></a>4． 安装配置 MySql（主节点）</h3><p>这里不做说明</p>
 <h3 id="5．-配置防火墙白名单和-SELinux"><a href="#5．-配置防火墙白名单和-SELinux" class="headerlink" title="5． 配置防火墙白名单和 SELinux"></a>5． 配置防火墙白名单和 SELinux</h3><p>注意： 需要在所有的节点上执行，因为涉及到的端口太多了，推荐使用防火墙白名单安装起来更方便，安装完毕后可以根据需要设置防火墙策略，保证集群安全。<br>配置防火墙白名单：</p>
